@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+    <title>Conclusao IMC</title>
+</head>
+<body>
+    
+    <div id="app">
+        <div class="container">
+            <div v-if="calculaImc" class="row my-4">
+                <div class="alert col-md-6 py-2 text-center mx-auto" :class="tipoAlerta">
+                    Seu IMC é {{ imc }} e você está na categoria: {{ categoria }} 
+                </div>
+            </div>
+            
+            <div v-else-if="calculaImc === false" class="row my-4 ">
+                <div class="bg-warning col-md-6 py-2 text-center mx-auto rounded">
+                    Falha ao calcular o seu IMC, por favor verifique os dados inseridos.
+                </div>
+            </div>
+
+            <div class="row d-flex justify-content-center align-self-end mt-5">
+                <div class="col-md-3 mt-3">
+                    <label class="mt w-100 text-center border rounded-2"><strong>Peso</strong>
+                        <input v-model="peso" type="number" class="form-control text-center" step="0.5">
+                    </label>
+                </div>
+                
+                <div class="col-md-3 mt-3">
+                    <label class="mt w-100 text-center border rounded-2"><strong>Altura</strong>
+                        <input v-model="altura" type="number" class="form-control text-center" step="0.5">
+                    </label>
+                </div>
+
+            </div>
+            
+         
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+
+        const vm = new Vue({
+            el: '#app',
+            data: {
+                peso: 0,
+                altura: 0,
+                imc: 0,
+                tipoAlerta: '',
+                categoria: ''
+            },
+
+            computed: {
+                calculaImc() {
+                    switch(true) {
+                        case (this.peso > 0 && this.altura > 0): 
+                            this.setDadosImc((this.peso / (this.altura ** 2)).toFixed(2));
+                            console.log(this.imc)
+                            return true;
+                        
+                        case (this.peso < 0 || this.altura < 0):
+                            return false;
+                        
+                        default: 
+                            return null;
+                    }
+                }
+            },
+
+            methods: {
+                setDadosImc(imc) {
+                    this.imc = imc;
+                    this.tipoAlerta = '';
+                    switch(true) {
+                        case (imc < 16): 
+                          this.tipoAlerta = 'alert-danger';
+                          this.categoria  = 'magreza grave';
+                        break;
+
+                        case (imc >= 16 && imc < 18.50):
+                         this.tipoAlerta = 'alert-warning';
+                         this.categoria  = 'magreza leve/moderada';
+                        break;
+                        
+                        case (imc >= 18.50 && imc < 25):
+                         this.tipoAlerta = 'alert-success';
+                         this.categoria  = 'massa corporal saudável ';
+                        break;
+                        
+                        case (imc >= 25 && imc < 30):
+                         this.tipoAlerta = 'alert-warning';
+                         this.categoria  = 'sobrepeso';
+                        break;
+                        
+                        case (imc >= 30 && imc <= 40):
+                         this.tipoAlerta = 'alert-danger';
+                         this.categoria  = 'obesidade';
+                        break;
+                        
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
